@@ -44,6 +44,8 @@ void init_server_net(AppState* app_state, const char* port) {
     tv.tv_usec = 0;
     setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
+    printf("Waiting for player to join...\n");
+
     while (true) {
         char test_recv_buf[6];
         int received =

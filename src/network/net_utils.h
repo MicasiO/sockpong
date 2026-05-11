@@ -14,7 +14,6 @@
 #define TIMEOUT_SECONDS 2
 
 typedef struct GameState GameState;
-typedef enum player_type { PLAYER_TYPE_CLIENT, PLAYER_TYPE_SERVER } player_type;
 
 typedef struct AppState {
     player_type role;
@@ -23,7 +22,7 @@ typedef struct AppState {
     uint32_t packet_num;
     bool running;
     WINDOW* win;
-    Vector win_size;
+    VectorInt win_size;
     GameState game_state;
     time_t last_packet_time;
 } AppState;

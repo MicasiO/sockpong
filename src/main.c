@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "ball.h"
 #include "network/client.h"
 #include "network/net_utils.h"
 #include "network/server.h"
@@ -17,18 +18,18 @@ int main(int argc, char** argv) {
 
     AppState app_state;
 
-    if (strcmp(argv[1], "server") == 0) {
+    if (strcmp(argv[1], "host") == 0) {
         app_state.role = PLAYER_TYPE_SERVER;
-    } else if (strcmp(argv[1], "client") == 0) {
+    } else if (strcmp(argv[1], "join") == 0) {
         app_state.role = PLAYER_TYPE_CLIENT;
     } else {
-        fprintf(stderr, "Unknown option \"%s\". Available options: client, server\n", argv[1]);
+        fprintf(stderr, "Unknown option \"%s\". Available options: host, join\n", argv[1]);
         exit(EXIT_FAILURE);
     }
 
     if (app_state.role == PLAYER_TYPE_CLIENT) {
         if (argc != 4) {
-            fprintf(stderr, "Invalid options. Usage: 'pong client IP_ADDRESS PORT'\n");
+            fprintf(stderr, "Invalid options. Usage: 'pong join IP_ADDRESS PORT'\n");
             exit(EXIT_FAILURE);
         }
 
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
 
     } else if (app_state.role == PLAYER_TYPE_SERVER) {
         if (argc != 3) {
-            fprintf(stderr, "Invalid options. Usage: 'pong server PORT'\n");
+            fprintf(stderr, "Invalid options. Usage: 'pong host PORT'\n");
             exit(EXIT_FAILURE);
         }
 
@@ -52,7 +53,20 @@ int main(int argc, char** argv) {
     initscr();
     cbreak();
     noecho();
+
+    if (has_colors() == FALSE) {
+        close(app_state.socket_fd);
+        endwin();
+        fprintf(stderr, "Your terminal does not support colors\n");
+        exit(EXIT_FAILURE);
+    } else {
+        start_color();
+        init_pair(BALL_COLOR_PAIR, COLOR_RED, COLOR_RED);
+    }
+
     curs_set(0);
+
+    srand(time(NULL));
 
     int sx, sy;
     getmaxyx(stdscr, sy, sx);
@@ -63,12 +77,15 @@ int main(int argc, char** argv) {
     Player player1 = {.pos = {.x = 10, .y = sy / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
     Player player2 = {.pos = {.x = sx - 10, .y = sy / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
 
+    Ball ball = {.pos = {.x = sx / 2, .y = sy / 2}, .vel = {.x = 1000, .y = 1000}};
+
     app_state.packet_num = 0;
     app_state.win = win;
     app_state.win_size.x = sx;
     app_state.win_size.y = sy;
     app_state.game_state.player1 = player1;
     app_state.game_state.player2 = player2;
+    app_state.game_state.ball = ball;
 
     loop(&app_state);
 

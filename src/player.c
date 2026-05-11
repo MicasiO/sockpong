@@ -23,8 +23,13 @@ void update_player(Player* player, uint32_t win_height) {
     }
 }
 
-void draw_player(Player* player, WINDOW* win) {
-    for (int i = player->pos.y; i < player->pos.y + PLAYER_SIZE; i++) {
-        mvwaddstr(win, i, player->pos.x, "█");
+void draw_players(Player* player1, Player* player2, WINDOW* win, player_type role) {
+    // TODO: perhaps implement flip screen for client
+    for (int i = player1->pos.y; i < player1->pos.y + PLAYER_SIZE; i++) {
+        mvwaddstr(win, i, player1->pos.x, "█");
+    }
+
+    for (int i = player2->pos.y; i < player2->pos.y + PLAYER_SIZE; i++) {
+        mvwaddstr(win, i, player2->pos.x, "█");
     }
 }

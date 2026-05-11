@@ -36,8 +36,8 @@ void send_packet(AppState* app_state, uint8_t packet_type) {
     packet.game_state.player2.vel.y = htonl(app_state->game_state.player2.vel.y);
     packet.game_state.player2.score = htonl(app_state->game_state.player2.score);
 
-    int sent = sendto(app_state->socket_fd, &packet, sizeof(Packet), 0,
-                      (struct sockaddr*)&app_state->enemy_addr, sizeof(app_state->enemy_addr));
+    sendto(app_state->socket_fd, &packet, sizeof(Packet), 0,
+           (struct sockaddr*)&app_state->enemy_addr, sizeof(app_state->enemy_addr));
 }
 
 bool recv_packet(AppState* app_state) {
