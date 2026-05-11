@@ -68,21 +68,19 @@ int main(int argc, char** argv) {
 
     srand(time(NULL));
 
-    int sx, sy;
-    getmaxyx(stdscr, sy, sx);
-
-    WINDOW* win = newwin(sy, sx, 0, 0);
+    WINDOW* win = newwin(WIN_HEIGHT, WIN_WIDTH, 0, 0);
     keypad(win, TRUE);
 
-    Player player1 = {.pos = {.x = 10, .y = sy / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
-    Player player2 = {.pos = {.x = sx - 10, .y = sy / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
+    Player player1 = {.pos = {.x = 10, .y = WIN_HEIGHT / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
+    Player player2 = {
+        .pos = {.x = WIN_WIDTH - 10, .y = WIN_HEIGHT / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
 
-    Ball ball = {.pos = {.x = sx / 2, .y = sy / 2}, .vel = {.x = 1000, .y = 1000}};
+    Ball ball = {.pos = {.x = WIN_WIDTH / 2, .y = WIN_HEIGHT / 2}, .vel = {.x = 1000, .y = 1000}};
 
     app_state.packet_num = 0;
     app_state.win = win;
-    app_state.win_size.x = sx;
-    app_state.win_size.y = sy;
+    app_state.win_size.x = WIN_WIDTH;
+    app_state.win_size.y = WIN_HEIGHT;
     app_state.game_state.player1 = player1;
     app_state.game_state.player2 = player2;
     app_state.game_state.ball = ball;

@@ -5,6 +5,9 @@
 
 #define FLOAT_SCALE 1000
 
+#define WIN_WIDTH 100
+#define WIN_HEIGHT 30
+
 typedef struct VectorInt {
     int32_t x;
     int32_t y;
