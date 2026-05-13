@@ -17,9 +17,11 @@ void loop(AppState* app_state) {
 void draw_loop(AppState* app_state) {
     GameState* game = &app_state->game_state;
     werase(app_state->win);
-    box(app_state->win, 0, 0);
+    wborder(app_state->win, 0, 0, 0, 0, 0, 0, 0, 0);
     draw_players(&game->player1, &game->player2, app_state->win, app_state->role);
     draw_ball(&game->ball, app_state->win);
+    wnoutrefresh(app_state->win);
+    doupdate();
 }
 
 void update_loop(AppState* app_state) {

@@ -18,20 +18,20 @@ void handle_wall_ball(Ball* ball, VectorInt win_size) {
     int scaled_win_x = win_size.x * FLOAT_SCALE;
     int scaled_ball_size = BALL_SIZE * FLOAT_SCALE;
 
-    if (ball->pos.y <= 0) {
-        ball->pos.y = FLOAT_SCALE;
-        ball->vel.y = abs(generate_random_vel(600, 900));
+    if (ball->pos.y - scaled_ball_size <= 0) {
+        ball->pos.y = FLOAT_SCALE * 2;
+        ball->vel.y = abs(generate_random_vel(300, 600));
     } else if (ball->pos.y + scaled_ball_size >= scaled_win_y - FLOAT_SCALE) {
         ball->pos.y = scaled_win_y - FLOAT_SCALE - scaled_ball_size;
-        ball->vel.y = -abs(generate_random_vel(600, 900));
+        ball->vel.y = -abs(generate_random_vel(300, 600));
     }
 
     else if (ball->pos.x <= 0) {
         ball->pos.x = FLOAT_SCALE;
-        ball->vel.x = abs(generate_random_vel(800, 1200));
+        ball->vel.x = abs(generate_random_vel(800, 1500));
     } else if (ball->pos.x + scaled_ball_size >= scaled_win_x - FLOAT_SCALE) {
         ball->pos.x = scaled_win_x - FLOAT_SCALE - scaled_ball_size;
-        ball->vel.x = -abs(generate_random_vel(800, 1200));
+        ball->vel.x = -abs(generate_random_vel(800, 1500));
     }
 }
 
@@ -48,7 +48,8 @@ void handle_player_ball(Ball* ball, Player* player) {
                      (ball->pos.y <= scaled_player_y + scaled_player_size);
 
     if (overlap_x && overlap_y) {
-        ball->vel.x *= -1;
+        ball->vel.x = ball->vel.x > 0 ? -abs(generate_random_vel(1200, 1500))
+                                      : generate_random_vel(1200, 1500);
 
         if (ball->vel.x > 0) {
             ball->pos.x = scaled_player_x + FLOAT_SCALE + 1;
@@ -62,7 +63,7 @@ void draw_ball(Ball* ball, WINDOW* win) {
     wattron(win, COLOR_PAIR(BALL_COLOR_PAIR));
     int screen_x = ball->pos.x / FLOAT_SCALE;
     int screen_y = ball->pos.y / FLOAT_SCALE;
-    mvwaddstr(win, screen_y, screen_x, "█");
+    mvwaddstr(win, screen_y, screen_x, "██");
     wattroff(win, COLOR_PAIR(BALL_COLOR_PAIR));
 }
 

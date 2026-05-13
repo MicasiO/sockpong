@@ -58,6 +58,10 @@ void init_server_net(AppState* app_state, const char* port) {
 
                 sendto(socket_fd, "start", 5, 0, (struct sockaddr*)&client_addr, addr_size);
                 break;
+            } else if (strcmp(test_recv_buf, "scan") == 0) {
+                for (int i = 0; i < 20; i++) {
+                    sendto(socket_fd, "scan", 4, 0, (struct sockaddr*)&client_addr, addr_size);
+                }
             }
         }
     }

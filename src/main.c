@@ -22,6 +22,13 @@ int main(int argc, char** argv) {
         app_state.role = PLAYER_TYPE_SERVER;
     } else if (strcmp(argv[1], "join") == 0) {
         app_state.role = PLAYER_TYPE_CLIENT;
+    } else if (strcmp(argv[1], "scan") == 0) {
+        if (argc != 3) {
+            fprintf(stderr, "Invalid options. Usage: 'pong scan PORT'\n");
+            exit(EXIT_FAILURE);
+        }
+        scan_hosts(argv[2]);
+        return 0;
     } else {
         fprintf(stderr, "Unknown option \"%s\". Available options: host, join\n", argv[1]);
         exit(EXIT_FAILURE);
@@ -62,6 +69,7 @@ int main(int argc, char** argv) {
     } else {
         start_color();
         init_pair(BALL_COLOR_PAIR, COLOR_RED, COLOR_RED);
+        init_pair(BG_COLOR_PAIR, COLOR_BLACK, COLOR_BLUE);
     }
 
     curs_set(0);

@@ -9,8 +9,6 @@
 #define BALL_SPEED 1
 #define BALL_SIZE 1
 
-#define BALL_COLOR_PAIR 1
-
 typedef struct Ball {
     VectorInt pos;
     VectorInt vel;

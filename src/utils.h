@@ -8,6 +8,9 @@
 #define WIN_WIDTH 100
 #define WIN_HEIGHT 30
 
+#define BALL_COLOR_PAIR 1
+#define BG_COLOR_PAIR 2
+
 typedef struct VectorInt {
     int32_t x;
     int32_t y;
