@@ -2,18 +2,19 @@
 #include <ncurses.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "game.h"
 #include "utils.h"
 
 void update_ball(Ball* ball, Player* player1, Player* player2, VectorInt win_size) {
     ball->pos.y += (BALL_SPEED * ball->vel.y);
     ball->pos.x += (BALL_SPEED * ball->vel.x);
 
-    handle_wall_ball(ball, win_size);
+    handle_wall_ball(ball, win_size, player1, player2);
     handle_player_ball(ball, player1);
     handle_player_ball(ball, player2);
 }
 
-void handle_wall_ball(Ball* ball, VectorInt win_size) {
+void handle_wall_ball(Ball* ball, VectorInt win_size, Player* player1, Player* player2) {
     int scaled_win_y = win_size.y * FLOAT_SCALE;
     int scaled_win_x = win_size.x * FLOAT_SCALE;
     int scaled_ball_size = BALL_SIZE * FLOAT_SCALE;
@@ -29,9 +30,15 @@ void handle_wall_ball(Ball* ball, VectorInt win_size) {
     else if (ball->pos.x <= 0) {
         ball->pos.x = FLOAT_SCALE;
         ball->vel.x = abs(generate_random_vel(800, 1500));
+        if (player2->score < MAX_SCORE) {
+            player2->score++;
+        }
     } else if (ball->pos.x + scaled_ball_size >= scaled_win_x - FLOAT_SCALE) {
         ball->pos.x = scaled_win_x - FLOAT_SCALE - scaled_ball_size;
         ball->vel.x = -abs(generate_random_vel(800, 1500));
+        if (player1->score < MAX_SCORE) {
+            player1->score++;
+        }
     }
 }
 
@@ -68,7 +75,5 @@ void draw_ball(Ball* ball, WINDOW* win) {
 }
 
 int32_t generate_random_vel(int lower_bound, int upper_bound) {
-    int32_t stuff = (int32_t)(rand() % (upper_bound - lower_bound + 1) + lower_bound);
-    print_log("%d\n", stuff);
-    return stuff;
+    return (int32_t)(rand() % (upper_bound - lower_bound + 1) + lower_bound);
 }

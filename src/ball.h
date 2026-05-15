@@ -17,7 +17,7 @@ typedef struct Ball {
 void update_ball(Ball* ball, Player* player1, Player* player2, VectorInt win_size);
 void draw_ball(Ball* ball, WINDOW* win);
 
-void handle_wall_ball(Ball* ball, VectorInt win_size);
+void handle_wall_ball(Ball* ball, VectorInt win_size, Player* player1, Player* player2);
 void handle_player_ball(Ball* ball, Player* player);
 
 int32_t generate_random_vel(int lower_bound, int upper_bound);

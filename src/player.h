@@ -6,7 +6,7 @@
 #include "utils.h"
 
 #define PLAYER_SPEED 1
-#define PLAYER_SIZE 7
+#define PLAYER_SIZE 5
 
 typedef struct GameState GameState;
 

@@ -19,6 +19,8 @@ void send_packet(AppState* app_state, uint8_t packet_type) {
     app_state->packet_num++;
     packet.sequence_num = htonl(app_state->packet_num);
 
+    packet.game_state.waiting_for_input = htonl(app_state->game_state.waiting_for_input);
+
     packet.game_state.ball.pos.x = htonl(app_state->game_state.ball.pos.x);
     packet.game_state.ball.pos.y = htonl(app_state->game_state.ball.pos.y);
     packet.game_state.ball.vel.x = htonl(app_state->game_state.ball.vel.x);
@@ -83,12 +85,24 @@ bool recv_packet(AppState* app_state) {
         app_state->game_state.player1.score = ntohl(packet.game_state.player1.score);
 
         app_state->game_state.player2.score = ntohl(packet.game_state.player2.score);
+        uint32_t server_waiting = ntohl(packet.game_state.waiting_for_input);
+
+        if (server_waiting == 0) {
+            app_state->game_state.waiting_for_input = 0;
+        }
 
     } else if (app_state->role == PLAYER_TYPE_SERVER) {
         app_state->game_state.player2.pos.x = ntohl(packet.game_state.player2.pos.x);
         app_state->game_state.player2.pos.y = ntohl(packet.game_state.player2.pos.y);
         app_state->game_state.player2.vel.x = ntohl(packet.game_state.player2.vel.x);
         app_state->game_state.player2.vel.y = ntohl(packet.game_state.player2.vel.y);
+
+        uint32_t client_waiting = ntohl(packet.game_state.waiting_for_input);
+
+        if (app_state->game_state.waiting_for_input == 1 && client_waiting == 0) {
+            start_round(&app_state->game_state);
+            app_state->game_state.waiting_for_input = 0;
+        }
     }
 
     return true;

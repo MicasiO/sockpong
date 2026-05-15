@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "ball.h"
+#include "game.h"
 #include "network/client.h"
 #include "network/net_utils.h"
 #include "network/server.h"
@@ -60,30 +61,37 @@ int main(int argc, char** argv) {
     initscr();
     cbreak();
     noecho();
+    curs_set(0);
+
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+
+    if (max_y < WIN_HEIGHT || max_x < WIN_WIDTH) {
+        close(app_state.socket_fd);
+        endwin();
+        fprintf(stderr, "Increase your terminal window size to play\n");
+        exit(EXIT_FAILURE);
+    }
 
     if (has_colors() == FALSE) {
         close(app_state.socket_fd);
         endwin();
         fprintf(stderr, "Your terminal does not support colors\n");
         exit(EXIT_FAILURE);
-    } else {
-        start_color();
-        init_pair(BALL_COLOR_PAIR, COLOR_RED, COLOR_RED);
-        init_pair(BG_COLOR_PAIR, COLOR_BLACK, COLOR_BLUE);
     }
 
-    curs_set(0);
+    start_color();
+    init_pair(BALL_COLOR_PAIR, COLOR_RED, 0);
+    init_pair(BG_COLOR_PAIR, COLOR_BLACK, COLOR_BLUE);
 
     srand(time(NULL));
 
     WINDOW* win = newwin(WIN_HEIGHT, WIN_WIDTH, 0, 0);
     keypad(win, TRUE);
 
-    Player player1 = {.pos = {.x = 10, .y = WIN_HEIGHT / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
-    Player player2 = {
-        .pos = {.x = WIN_WIDTH - 10, .y = WIN_HEIGHT / 2}, .vel = {.x = 0, .y = 0}, .score = 0};
-
-    Ball ball = {.pos = {.x = WIN_WIDTH / 2, .y = WIN_HEIGHT / 2}, .vel = {.x = 1000, .y = 1000}};
+    Player player1 = {0};
+    Player player2 = {0};
+    Ball ball = {0};
 
     app_state.packet_num = 0;
     app_state.win = win;
@@ -92,6 +100,8 @@ int main(int argc, char** argv) {
     app_state.game_state.player1 = player1;
     app_state.game_state.player2 = player2;
     app_state.game_state.ball = ball;
+
+    reset_round(&app_state.game_state);
 
     loop(&app_state);
 

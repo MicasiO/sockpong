@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 
 void die(const char* s) {
     endwin();
@@ -23,4 +24,19 @@ void print_log(const char* s, ...) {
     fclose(file);
 
     va_end(args);
+}
+
+void draw_figlet(WINDOW* win, int y, int x, const char* s) {
+    int pos_x = x;
+    int pos_y = y;
+
+    for (int i = 0; i < strlen(s); i++) {
+        if (s[i] == '\n') {
+            pos_y++;
+            pos_x = x;
+            continue;
+        }
+        mvwaddch(win, pos_y, pos_x, s[i]);
+        pos_x++;
+    }
 }

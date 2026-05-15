@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <ncurses.h>
 #include <stdint.h>
 
 #define FLOAT_SCALE 1000
@@ -18,5 +19,6 @@ typedef struct VectorInt {
 
 void die(const char* s);
 void print_log(const char* s, ...);
+void draw_figlet(WINDOW* win, int y, int x, const char* s);
 
 #endif
