@@ -32,6 +32,20 @@ void draw_loop(AppState* app_state) {
 
 void update_loop(AppState* app_state) {
     GameState* game = &app_state->game_state;
+
+    bool timer_running = !app_state->round_timer.done;
+
+    if (timer_running) {
+        get_timer(&app_state->round_timer);
+        draw_round_timer(app_state->win, &app_state->round_timer);
+
+        if (app_state->round_timer.done) {
+            if (app_state->role == PLAYER_TYPE_SERVER) {
+                start_round(app_state);
+            }
+        }
+    }
+
     int ch = wgetch(app_state->win);
     switch (ch) {
         case 27:  // esc
@@ -40,15 +54,8 @@ void update_loop(AppState* app_state) {
         case KEY_UP:
         case KEY_DOWN:
             if (app_state->role == PLAYER_TYPE_SERVER) {
-                if (game->waiting_for_input) {
-                    start_round(game);
-                    game->waiting_for_input = 0;
-                }
                 handle_player_input(ch, &game->player1);
             } else if (app_state->role == PLAYER_TYPE_CLIENT) {
-                if (game->waiting_for_input) {
-                    game->waiting_for_input = 0;
-                }
                 handle_player_input(ch, &game->player2);
             }
             break;
@@ -58,29 +65,38 @@ void update_loop(AppState* app_state) {
 
     update_player(&game->player1, app_state->win_size.y);
     update_player(&game->player2, app_state->win_size.y);
-    update_ball(&game->ball, &game->player1, &game->player2, app_state->win_size);
+    update_ball(app_state);
 }
 
 void draw_score(WINDOW* win, uint32_t player1_score, uint32_t player2_score) {
+    wattron(win, COLOR_PAIR(SCORE_COLOR_PAIR));
     draw_figlet(win, WIN_HEIGHT / 2 - 3, WIN_WIDTH / 2 - 16, figlets[player1_score]);
     draw_figlet(win, WIN_HEIGHT / 2 - 3, WIN_WIDTH / 2 + 10, figlets[player2_score]);
+    wattroff(win, COLOR_PAIR(SCORE_COLOR_PAIR));
 }
 
-void start_round(GameState* game_state) {
-    game_state->ball.vel = (VectorInt){.x = 1000, .y = 1000};
+void draw_round_timer(WINDOW* win, Timer* timer) {
+    draw_figlet(win, 2, WIN_WIDTH / 2 - 2, figlets[(int)get_timer(timer) + 1]);
 }
 
-void reset_round(GameState* game_state) {
-    game_state->player1.pos = (VectorInt){.x = 10, .y = WIN_HEIGHT / 2 - PLAYER_SIZE / 2};
+void start_round(AppState* app_state) {
+    Ball* ball = &app_state->game_state.ball;
+    ball->vel = (VectorInt){.x = 1000, .y = 1000};
+}
+
+void reset_round(AppState* app_state) {
+    GameState* game_state = &app_state->game_state;
+    game_state->player1.pos.x = PLAYER1_START_POS_X;
+    game_state->player1.pos.y = PLAYER1_START_POS_Y;
     game_state->player1.vel = (VectorInt){.x = 0, .y = 0};
 
-    game_state->player2.pos =
-        (VectorInt){.x = WIN_WIDTH - 10, .y = WIN_HEIGHT / 2 - PLAYER_SIZE / 2};
+    game_state->player2.pos.x = PLAYER2_START_POS_X;
+    game_state->player2.pos.y = PLAYER2_START_POS_Y;
     game_state->player2.vel = (VectorInt){.x = 0, .y = 0};
 
     game_state->ball.pos =
         (VectorInt){.x = WIN_WIDTH * FLOAT_SCALE / 2, .y = WIN_HEIGHT * FLOAT_SCALE / 2};
     game_state->ball.vel = (VectorInt){.x = 0, .y = 0};
 
-    game_state->waiting_for_input = 1;
+    start_timer(&app_state->round_timer);
 }

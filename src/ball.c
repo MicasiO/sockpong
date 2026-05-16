@@ -3,21 +3,29 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "game.h"
+#include "network/net_utils.h"
 #include "utils.h"
 
-void update_ball(Ball* ball, Player* player1, Player* player2, VectorInt win_size) {
-    ball->pos.y += (BALL_SPEED * ball->vel.y);
-    ball->pos.x += (BALL_SPEED * ball->vel.x);
+void update_ball(AppState* app_state) {
+    GameState* game_state = &app_state->game_state;
+    game_state->ball.pos.y += (BALL_SPEED * game_state->ball.vel.y);
+    game_state->ball.pos.x += (BALL_SPEED * game_state->ball.vel.x);
 
-    handle_wall_ball(ball, win_size, player1, player2);
-    handle_player_ball(ball, player1);
-    handle_player_ball(ball, player2);
+    handle_wall_ball(app_state);
+    handle_player_ball(&game_state->ball, &game_state->player1);
+    handle_player_ball(&game_state->ball, &game_state->player2);
 }
 
-void handle_wall_ball(Ball* ball, VectorInt win_size, Player* player1, Player* player2) {
-    int scaled_win_y = win_size.y * FLOAT_SCALE;
-    int scaled_win_x = win_size.x * FLOAT_SCALE;
+void handle_wall_ball(AppState* app_state) {
+    GameState* game_state = &app_state->game_state;
+
+    int scaled_win_y = app_state->win_size.y * FLOAT_SCALE;
+    int scaled_win_x = app_state->win_size.x * FLOAT_SCALE;
     int scaled_ball_size = BALL_SIZE * FLOAT_SCALE;
+
+    Ball* ball = &game_state->ball;
+    Player* player1 = &game_state->player1;
+    Player* player2 = &game_state->player2;
 
     if (ball->pos.y - scaled_ball_size <= 0) {
         ball->pos.y = FLOAT_SCALE * 2;
@@ -33,12 +41,14 @@ void handle_wall_ball(Ball* ball, VectorInt win_size, Player* player1, Player* p
         if (player2->score < MAX_SCORE) {
             player2->score++;
         }
+        reset_round(app_state);
     } else if (ball->pos.x + scaled_ball_size >= scaled_win_x - FLOAT_SCALE) {
         ball->pos.x = scaled_win_x - FLOAT_SCALE - scaled_ball_size;
         ball->vel.x = -abs(generate_random_vel(800, 1500));
         if (player1->score < MAX_SCORE) {
             player1->score++;
         }
+        reset_round(app_state);
     }
 }
 

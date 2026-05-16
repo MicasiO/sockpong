@@ -14,14 +14,14 @@ typedef struct GameState {
     Player player1;
     Player player2;
     Ball ball;
-    uint32_t waiting_for_input;
 } __attribute__((packed)) GameState;
 
 void loop(AppState* app_state);
 void update_loop(AppState* app_state);
 void draw_loop(AppState* app_state);
 void draw_score(WINDOW* win, uint32_t player1_score, uint32_t player2_score);
-void reset_round(GameState* game_state);
-void start_round(GameState* game_state);
+void reset_round(AppState* app_state);
+void start_round(AppState* app_state);
+void draw_round_timer(WINDOW* win, Timer* timer);
 
 #endif

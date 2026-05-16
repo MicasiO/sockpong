@@ -81,8 +81,10 @@ int main(int argc, char** argv) {
     }
 
     start_color();
-    init_pair(BALL_COLOR_PAIR, COLOR_RED, 0);
-    init_pair(BG_COLOR_PAIR, COLOR_BLACK, COLOR_BLUE);
+    use_default_colors();
+    init_color(COLOR_GRAY, 500, 500, 500);
+    init_pair(BALL_COLOR_PAIR, COLOR_RED, COLOR_RED);
+    init_pair(SCORE_COLOR_PAIR, COLOR_GRAY, -1);
 
     srand(time(NULL));
 
@@ -100,8 +102,9 @@ int main(int argc, char** argv) {
     app_state.game_state.player1 = player1;
     app_state.game_state.player2 = player2;
     app_state.game_state.ball = ball;
+    app_state.round_timer.length.tv_sec = 3;
 
-    reset_round(&app_state.game_state);
+    reset_round(&app_state);
 
     loop(&app_state);
 

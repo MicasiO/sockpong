@@ -8,6 +8,12 @@
 #define PLAYER_SPEED 1
 #define PLAYER_SIZE 5
 
+#define PLAYER1_START_POS_X 10
+#define PLAYER1_START_POS_Y WIN_HEIGHT / 2
+
+#define PLAYER2_START_POS_X WIN_WIDTH - 10
+#define PLAYER2_START_POS_Y WIN_HEIGHT / 2
+
 typedef struct GameState GameState;
 
 typedef enum player_type { PLAYER_TYPE_CLIENT, PLAYER_TYPE_SERVER } player_type;

@@ -21,6 +21,7 @@ typedef struct AppState {
     struct sockaddr_in enemy_addr;
     uint32_t packet_num;
     bool running;
+    Timer round_timer;
     WINDOW* win;
     VectorInt win_size;
     GameState game_state;
