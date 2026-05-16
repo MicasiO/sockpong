@@ -23,5 +23,6 @@ void draw_score(WINDOW* win, uint32_t player1_score, uint32_t player2_score);
 void reset_round(AppState* app_state);
 void start_round(AppState* app_state);
 void draw_round_timer(WINDOW* win, Timer* timer);
+void end_game(AppState* app_state);
 
 #endif

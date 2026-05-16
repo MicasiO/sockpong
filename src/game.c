@@ -1,6 +1,7 @@
 #include "game.h"
 #include <ncurses.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "ball.h"
 #include "figlets.h"
@@ -99,4 +100,28 @@ void reset_round(AppState* app_state) {
     game_state->ball.vel = (VectorInt){.x = 0, .y = 0};
 
     start_timer(&app_state->round_timer);
+}
+
+void end_game(AppState* app_state) {
+    app_state->running = false;
+
+    delwin(app_state->win);
+    endwin();
+    close(app_state->socket_fd);
+
+    bool player1_won = app_state->game_state.player1.score > app_state->game_state.player2.score;
+
+    if (player1_won) {
+        if (app_state->role == PLAYER_TYPE_SERVER) {
+            printf("You won\n");
+        } else {
+            printf("You lost\n");
+        }
+    } else {
+        if (app_state->role == PLAYER_TYPE_SERVER) {
+            printf("You lost\n");
+        } else {
+            printf("You won\n");
+        }
+    }
 }

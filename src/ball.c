@@ -38,15 +38,19 @@ void handle_wall_ball(AppState* app_state) {
     else if (ball->pos.x <= 0) {
         ball->pos.x = FLOAT_SCALE;
         ball->vel.x = abs(generate_random_vel(800, 1500));
-        if (player2->score < MAX_SCORE) {
-            player2->score++;
+
+        player2->score++;
+        if (player2->score == MAX_SCORE) {
+            end_game(app_state);
         }
         reset_round(app_state);
     } else if (ball->pos.x + scaled_ball_size >= scaled_win_x - FLOAT_SCALE) {
         ball->pos.x = scaled_win_x - FLOAT_SCALE - scaled_ball_size;
         ball->vel.x = -abs(generate_random_vel(800, 1500));
-        if (player1->score < MAX_SCORE) {
-            player1->score++;
+
+        player1->score++;
+        if (player1->score == MAX_SCORE) {
+            end_game(app_state);
         }
         reset_round(app_state);
     }

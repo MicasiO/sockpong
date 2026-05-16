@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include "ball.h"
 #include "game.h"
@@ -14,6 +15,14 @@
 int main(int argc, char** argv) {
     if (argc < 2) {
         fprintf(stderr, "At least one argument required\n");
+        exit(EXIT_FAILURE);
+    }
+
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    if (w.ws_row < WIN_HEIGHT || w.ws_col < WIN_WIDTH) {
+        fprintf(stderr, "Increase your terminal window size to play\n");
         exit(EXIT_FAILURE);
     }
 
@@ -62,16 +71,6 @@ int main(int argc, char** argv) {
     cbreak();
     noecho();
     curs_set(0);
-
-    int max_y, max_x;
-    getmaxyx(stdscr, max_y, max_x);
-
-    if (max_y < WIN_HEIGHT || max_x < WIN_WIDTH) {
-        close(app_state.socket_fd);
-        endwin();
-        fprintf(stderr, "Increase your terminal window size to play\n");
-        exit(EXIT_FAILURE);
-    }
 
     if (has_colors() == FALSE) {
         close(app_state.socket_fd);
