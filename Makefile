@@ -1,14 +1,16 @@
-TARGET = sockpong
 
 CC = gcc
 
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Darwin)
+    TARGET = sockpong_mac
     CC = clang
     FLAGS = $(shell pkg-config --cflags --libs raylib)
     TESTFLAGS = -g -fsanitize=address,undefined -Wall $(FLAGS)
 else
+    TARGET = sockpong_linux
+    CC = clang
     CC = gcc
     FLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt
     TESTFLAGS = -g -fsanitize=address,leak,undefined,pointer-compare,pointer-subtract -Wall $(FLAGS)
