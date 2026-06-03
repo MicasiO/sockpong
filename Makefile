@@ -5,12 +5,14 @@ CC = gcc
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Darwin)
-	FLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt
+    CC = clang
+    FLAGS = $(shell pkg-config --cflags --libs raylib)
+    TESTFLAGS = -g -fsanitize=address,undefined -Wall $(FLAGS)
 else
-	FLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt
+    CC = gcc
+    FLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt
+    TESTFLAGS = -g -fsanitize=address,leak,undefined,pointer-compare,pointer-subtract -Wall $(FLAGS)
 endif
-
-TESTFLAGS = -g -fsanitize=address,leak,undefined,pointer-compare,pointer-subtract -Wall -lraylib -lGL -lm -lpthread -ldl -lrt 
 
 SOURCES = $(wildcard src/*.c) $(wildcard src/network/*.c) $(wildcard src/ui/*.c)
 

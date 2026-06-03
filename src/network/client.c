@@ -70,7 +70,6 @@ void init_client_net(AppState* app_state, const char* ip_addr, const char* port)
     setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
     freeaddrinfo(res);
-
     print_log("client: received packet, connection established\n");
 }
 
@@ -124,8 +123,6 @@ void scan_hosts(const char* port) {
             char ip_str[INET_ADDRSTRLEN];
             printf("%s\n", inet_ntop(AF_INET, &(server_addr.sin_addr), ip_str, INET_ADDRSTRLEN));
         }
-    } else {
-        printf("No hosts found\n");
     }
 
     freeaddrinfo(res);
