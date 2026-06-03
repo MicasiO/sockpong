@@ -4,5 +4,6 @@
 #include "net_utils.h"
 
 void init_server_net(AppState* app_state, const char* port);
+void respond_scan(AppState* app_state, const char* port);
 
 #endif

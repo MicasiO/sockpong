@@ -23,6 +23,7 @@ void send_packet(AppState* app_state, uint8_t packet_type) {
     packet.game_state.ball.pos.y = htonl(app_state->game_state.ball.pos.y);
     packet.game_state.ball.vel.x = htonl(app_state->game_state.ball.vel.x);
     packet.game_state.ball.vel.y = htonl(app_state->game_state.ball.vel.y);
+    packet.game_state.ball.speed = htonl(app_state->game_state.ball.speed);
 
     packet.game_state.player1.pos.x = htonl(app_state->game_state.player1.pos.x);
     packet.game_state.player1.pos.y = htonl(app_state->game_state.player1.pos.y);
@@ -75,6 +76,7 @@ bool recv_packet(AppState* app_state) {
         app_state->game_state.ball.pos.y = ntohl(packet.game_state.ball.pos.y);
         app_state->game_state.ball.vel.x = ntohl(packet.game_state.ball.vel.x);
         app_state->game_state.ball.vel.y = ntohl(packet.game_state.ball.vel.y);
+        app_state->game_state.ball.speed = ntohl(packet.game_state.ball.speed);
 
         app_state->game_state.player1.pos.x = ntohl(packet.game_state.player1.pos.x);
         app_state->game_state.player1.pos.y = ntohl(packet.game_state.player1.pos.y);

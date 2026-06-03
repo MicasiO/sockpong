@@ -22,8 +22,6 @@ typedef struct AppState {
     uint32_t packet_num;
     bool running;
     Timer round_timer;
-    WINDOW* win;
-    VectorInt win_size;
     GameState game_state;
     time_t last_packet_time;
 } AppState;

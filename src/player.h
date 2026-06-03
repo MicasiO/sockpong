@@ -1,18 +1,19 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <ncurses.h>
 #include <stdint.h>
 #include "utils.h"
 
-#define PLAYER_SPEED 1
-#define PLAYER_SIZE 5
+#define PLAYER_SPEED 20
+
+#define PLAYER_WIDTH 10
+#define PLAYER_HEIGHT 100
 
 #define PLAYER1_START_POS_X 10
-#define PLAYER1_START_POS_Y WIN_HEIGHT / 2
+#define PLAYER1_START_POS_Y (WIN_HEIGHT / 2) - (PLAYER_HEIGHT / 2)
 
-#define PLAYER2_START_POS_X WIN_WIDTH - 10
-#define PLAYER2_START_POS_Y WIN_HEIGHT / 2
+#define PLAYER2_START_POS_X WIN_WIDTH - 10 - PLAYER_WIDTH
+#define PLAYER2_START_POS_Y (WIN_HEIGHT / 2) - (PLAYER_HEIGHT / 2)
 
 typedef struct GameState GameState;
 
@@ -24,8 +25,8 @@ typedef struct Player {
     uint32_t score;
 } __attribute__((packed)) Player;
 
-void handle_player_input(int ch, Player* player);
-void update_player(Player* player, uint32_t win_height);
-void draw_players(Player* player1, Player* player2, WINDOW* win, player_type role);
+void handle_player_input(Player* player);
+void update_player(Player* player);
+void draw_players(Player* player1, Player* player2);
 
 #endif

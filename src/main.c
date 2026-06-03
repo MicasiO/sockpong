@@ -1,5 +1,4 @@
-#include <locale.h>
-#include <ncurses.h>
+#include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,14 +14,6 @@
 int main(int argc, char** argv) {
     if (argc < 2) {
         fprintf(stderr, "At least one argument required\n");
-        exit(EXIT_FAILURE);
-    }
-
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-
-    if (w.ws_row < WIN_HEIGHT || w.ws_col < WIN_WIDTH) {
-        fprintf(stderr, "Increase your terminal window size to play\n");
         exit(EXIT_FAILURE);
     }
 
@@ -64,40 +55,17 @@ int main(int argc, char** argv) {
         }
 
         init_server_net(&app_state, argv[2]);
+        return 0;
     }
-
-    setlocale(LC_ALL, "");
-    initscr();
-    cbreak();
-    noecho();
-    curs_set(0);
-
-    if (has_colors() == FALSE) {
-        close(app_state.socket_fd);
-        endwin();
-        fprintf(stderr, "Your terminal does not support colors\n");
-        exit(EXIT_FAILURE);
-    }
-
-    start_color();
-    use_default_colors();
-    init_color(COLOR_GRAY, 500, 500, 500);
-    init_pair(BALL_COLOR_PAIR, COLOR_RED, COLOR_RED);
-    init_pair(SCORE_COLOR_PAIR, COLOR_GRAY, -1);
 
     srand(time(NULL));
-
-    WINDOW* win = newwin(WIN_HEIGHT, WIN_WIDTH, 0, 0);
-    keypad(win, TRUE);
 
     Player player1 = {0};
     Player player2 = {0};
     Ball ball = {0};
+    ball.speed = INIT_BALL_SPEED;
 
     app_state.packet_num = 0;
-    app_state.win = win;
-    app_state.win_size.x = WIN_WIDTH;
-    app_state.win_size.y = WIN_HEIGHT;
     app_state.game_state.player1 = player1;
     app_state.game_state.player2 = player2;
     app_state.game_state.ball = ball;
@@ -105,10 +73,27 @@ int main(int argc, char** argv) {
 
     reset_round(&app_state);
 
-    loop(&app_state);
+    InitWindow(WIN_WIDTH, WIN_HEIGHT, "sockpong");
+    SetTargetFPS(30);
+    SetWindowMinSize(WIN_WIDTH, WIN_HEIGHT);
+    SetWindowMaxSize(WIN_WIDTH, WIN_HEIGHT);
 
-    delwin(win);
-    endwin();
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+
+        DrawRectangleLinesEx((Rectangle){-1, -1, WIN_WIDTH + 2, WIN_HEIGHT + 2}, 1, WHITE);
+
+        if (!app_state.running) {
+            break;
+        }
+
+        ClearBackground(BLACK);
+        loop(&app_state);
+
+        EndDrawing();
+    }
+
+    CloseWindow();
 
     close(app_state.socket_fd);
     return 0;
